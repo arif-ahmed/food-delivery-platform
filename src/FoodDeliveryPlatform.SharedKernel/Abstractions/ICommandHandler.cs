@@ -10,6 +10,6 @@ namespace FoodDeliveryPlatform.SharedKernel.Abstractions
 
     public interface ICommandHandler<in TCommand> where TCommand : ICommand
     {
-        Task<Result> Handle(TCommand command);
+        Task<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default);
     }
 }

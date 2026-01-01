@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="src/FoodDeliveryPlatform.Application/FoodDeliveryPlatform.Application.csproj" />
+  <Project Path="src/FoodDeliveryPlatform.Domain/FoodDeliveryPlatform.Domain.csproj" Id="d6a223a6-f597-4a1b-a89a-8e394dc6b91a" />
   <Project Path="src/FoodDeliveryPlatform.SharedKernel/FoodDeliveryPlatform.SharedKernel.csproj" />
+  <Project Path="src/FoodDeliveryPlatform.WorkerHost/FoodDeliveryPlatform.WorkerHost.csproj" />
 </Solution>
