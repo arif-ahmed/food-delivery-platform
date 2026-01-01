@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Deliveries\" />
+    <Folder Include="Payments\" />
     <Folder Include="Restaurant\ValueObjects\" />
   </ItemGroup>
 

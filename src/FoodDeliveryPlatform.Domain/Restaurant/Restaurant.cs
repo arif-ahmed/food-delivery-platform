@@ -1,4 +1,5 @@
-﻿using FoodDeliveryPlatform.SharedKernel;
+﻿using FoodDeliveryPlatform.Domain.Restaurant.Events;
+using FoodDeliveryPlatform.SharedKernel;
 using FoodDeliveryPlatform.SharedKernel.Abstractions;
 
 
@@ -17,9 +18,11 @@ namespace FoodDeliveryPlatform.Domain.Restaurant
             Name = name;
         }
 
-        public static Restaurant Create(string name)
+        public static Restaurant Create(out RestaurantCreatedEvent @event, string name)
         {
-            return new Restaurant(Guid.NewGuid(), name);
+            var id = Guid.NewGuid();
+            @event = new RestaurantCreatedEvent(id, name);
+            return new Restaurant(id, name);
         }
 
         public void AddMenu(Menu menu)

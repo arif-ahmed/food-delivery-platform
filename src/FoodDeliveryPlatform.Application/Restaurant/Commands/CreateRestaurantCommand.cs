@@ -1,4 +1,5 @@
 ﻿using FoodDeliveryPlatform.Application.Restaurant.Abstractions;
+using FoodDeliveryPlatform.Domain.Restaurant.Events;
 using FoodDeliveryPlatform.SharedKernel.Abstractions;
 
 namespace FoodDeliveryPlatform.Application.Restaurant.Commands
@@ -13,16 +14,25 @@ namespace FoodDeliveryPlatform.Application.Restaurant.Commands
     public class CreateRestaurantCommandHandler : ICommandHandler<CreateRestaurantCommand>
     {
         private readonly IRestaurantRepository _restaurantRepository;
-
-        public CreateRestaurantCommandHandler(IRestaurantRepository restaurantRepository)
+        private readonly IServiceBus _serviceBus;
+        
+        public CreateRestaurantCommandHandler(IRestaurantRepository restaurantRepository, IServiceBus serviceBus)
         {
             _restaurantRepository = restaurantRepository;
+            _serviceBus = serviceBus;
         }
 
         public async Task<Result> HandleAsync(CreateRestaurantCommand command, CancellationToken cancellationToken = default)
         {
-            var restaurant = Domain.Restaurant.Restaurant.Create(command.Name);
+            RestaurantCreatedEvent restaurantCreatedEvent;
+
+            var restaurant = Domain.Restaurant.Restaurant.Create(out restaurantCreatedEvent, command.Name);
             await _restaurantRepository.AddAsync(restaurant, cancellationToken);
+
+            restaurantCreatedEvent = new RestaurantCreatedEvent(restaurant.Id, restaurant.Name);
+
+            await _serviceBus.PublishAsync(restaurantCreatedEvent, cancellationToken);
+
             return new Result(true);
         }
     }
