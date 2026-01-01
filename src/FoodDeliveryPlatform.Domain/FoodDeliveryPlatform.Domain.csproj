@@ -10,8 +10,4 @@
     <ProjectReference Include="..\FoodDeliveryPlatform.SharedKernel\FoodDeliveryPlatform.SharedKernel.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Restaurant\ValueObjects\" />
-  </ItemGroup>
-
 </Project>
