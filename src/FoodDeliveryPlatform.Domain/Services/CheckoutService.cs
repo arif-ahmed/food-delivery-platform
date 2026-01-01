@@ -10,7 +10,29 @@ namespace FoodDeliveryPlatform.Domain.Services
     {
         public void Checkout(Cart cart, Order order)
         {
-            // Implementation for checking out the cart and creating an order
+            //if (cart == null)
+            //{
+            //    throw new ArgumentNullException(nameof(cart));
+            //}
+            //if (order == null)
+            //{
+            //    throw new ArgumentNullException(nameof(order));
+            //}
+
+            //order.Items = new List<OrderItem>();
+            //foreach (var cartItem in cart.Items)
+            //{
+            //    order.Items.Add(new OrderItem
+            //    {
+            //        ProductId = cartItem.ProductId,
+            //        Quantity = cartItem.Quantity,
+            //        Price = cartItem.Price
+            //    });
+            //}
+            //order.TotalAmount = cart.CalculateTotal();
+            //order.OrderDate = DateTime.UtcNow;
+
+            //cart.Clear();
         }
     }
 }
