@@ -1,7 +1,8 @@
 <Solution>
-  <Project Path="src/FoodDeliveryPlatform.Api/FoodDeliveryPlatform.Api.csproj" Id="eb1ee2dd-1e43-41e7-b0f2-c2ca58d78d05" />
-  <Project Path="src/FoodDeliveryPlatform.Application/FoodDeliveryPlatform.Application.csproj" />
-  <Project Path="src/FoodDeliveryPlatform.Domain/FoodDeliveryPlatform.Domain.csproj" Id="d6a223a6-f597-4a1b-a89a-8e394dc6b91a" />
-  <Project Path="src/FoodDeliveryPlatform.SharedKernel/FoodDeliveryPlatform.SharedKernel.csproj" />
-  <Project Path="src/FoodDeliveryPlatform.WorkerHost/FoodDeliveryPlatform.WorkerHost.csproj" />
+  <Project Path="D:/Workspace/References/food-delivery-platform/src/FoodDeliveryPlatform.Api/FoodDeliveryPlatform.Api.csproj" Id="eb1ee2dd-1e43-41e7-b0f2-c2ca58d78d05" />
+  <Project Path="D:/Workspace/References/food-delivery-platform/src/FoodDeliveryPlatform.Application/FoodDeliveryPlatform.Application.csproj" />
+  <Project Path="D:/Workspace/References/food-delivery-platform/src/FoodDeliveryPlatform.Domain/FoodDeliveryPlatform.Domain.csproj" Id="d6a223a6-f597-4a1b-a89a-8e394dc6b91a" />
+  <Project Path="D:/Workspace/References/food-delivery-platform/src/FoodDeliveryPlatform.Infrastructure/FoodDeliveryPlatform.Infrastructure.csproj" Id="86ff90c3-672a-4301-8978-05c3ae5e330a" />
+  <Project Path="D:/Workspace/References/food-delivery-platform/src/FoodDeliveryPlatform.SharedKernel/FoodDeliveryPlatform.SharedKernel.csproj" />
+  <Project Path="D:/Workspace/References/food-delivery-platform/src/FoodDeliveryPlatform.WorkerHost/FoodDeliveryPlatform.WorkerHost.csproj" />
 </Solution>
