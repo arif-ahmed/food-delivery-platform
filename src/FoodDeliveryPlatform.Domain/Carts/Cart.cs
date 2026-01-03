@@ -1,10 +1,22 @@
-﻿namespace FoodDeliveryPlatform.Domain.Carts
+﻿using FoodDeliveryPlatform.SharedKernel;
+using FoodDeliveryPlatform.SharedKernel.Abstractions;
+
+namespace FoodDeliveryPlatform.Domain.Carts
 {
-    public class Cart
+    public class Cart : Entity<Guid>, IAggregateRoot
     {
         private readonly List<CartItem> _items = new List<CartItem>();
 
+        public Cart(Guid id) : base(id)
+        {
+        }
+
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
+
+        public static Cart Create(string customerId)
+        {
+            return new Cart(Guid.CreateVersion7());
+        }
 
         public void AddCartItem(Guid productId, int quantity)
         {
@@ -18,6 +30,11 @@
             {
                 item.Quantity = newQuantity;
             }
+        }
+
+        public void RemoveCartItem(Guid productId)
+        {
+            _items.RemoveAll(i => i.ProductId == productId);
         }
 
         public void ApplyCoupon(string couponCode)
