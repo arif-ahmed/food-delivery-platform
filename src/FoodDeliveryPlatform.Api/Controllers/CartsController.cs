@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart;
+using FoodDeliveryPlatform.Application.Cart.Commands.Checkout;
+using FoodDeliveryPlatform.Application.Cart.Commands.ClearCart;
+using FoodDeliveryPlatform.Application.Cart.Commands.RemoveItemFromCart;
+using FoodDeliveryPlatform.Application.Cart.Queries.GetCart;
+using FoodDeliveryPlatform.SharedKernel.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryPlatform.Api.Controllers
 {
@@ -6,52 +12,87 @@ namespace FoodDeliveryPlatform.Api.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
-        /**
-            Method	Endpoint	Description	Domain Command Triggered
-            POST	/carts	Create a new session/cart.	CreateCart
-            GET	/carts/{cartId}	Retrieve current items and total.	GetCartDetails
-            POST	/carts/{cartId}/items	Add a dish to the cart.	AddItemToCart
-            PUT	/carts/{cartId}/items/{itemId}	Update quantity (e.g., +1 pizza).	UpdateItemQuantity
-            DELETE	/carts/{cartId}/items/{itemId}	Remove an item.	RemoveItemFromCart
-            POST	/carts/{cartId}/checkout	Transition from Cart to Order.	PlaceOrder (Starts the OTP flow)
-        **/
-        public CartsController()
+        private readonly ICommandHandler<AddItemToCartCommand> _addItemHandler;
+        private readonly ICommandHandler<RemoveItemFromCartCommand> _removeItemHandler;
+        private readonly ICommandHandler<ClearCartCommand> _clearCartHandler;
+        private readonly ICommandHandler<CheckoutCartCommand> _checkoutCartHandler;
+        private readonly IQueryHandler<GetCartQuery, Application.Cart.Dtos.CartDto?> _getCartHandler;
+
+        public CartsController(
+            ICommandHandler<AddItemToCartCommand> addItemHandler,
+            ICommandHandler<RemoveItemFromCartCommand> removeItemHandler,
+            ICommandHandler<ClearCartCommand> clearCartHandler,
+            ICommandHandler<CheckoutCartCommand> checkoutCartHandler,
+            IQueryHandler<GetCartQuery, Application.Cart.Dtos.CartDto?> getCartHandler)
         {
+            _addItemHandler = addItemHandler;
+            _removeItemHandler = removeItemHandler;
+            _clearCartHandler = clearCartHandler;
+            _checkoutCartHandler = checkoutCartHandler;
+            _getCartHandler = getCartHandler;
         }
 
         [HttpGet("{cartId}")]
-        public IActionResult Get(Guid cartId) 
+        public async Task<IActionResult> Get(Guid cartId, CancellationToken ct) 
         {
-            return Ok(cartId);
-        }
-
-        [HttpPost]
-        public IActionResult Post() 
-        {
-            // Create a new cart
-
-            return Ok();
+            var cart = await _getCartHandler.HandleAsync(new GetCartQuery(cartId), ct);
+            if (cart == null) return NotFound();
+            return Ok(cart);
         }
 
         [HttpPost("{cartId}/items")]
-        public IActionResult AddItemToCart(Guid cartId, Guid itemId, int quantity) 
+        public async Task<IActionResult> AddItemToCart(Guid cartId, AddItemRequest request, CancellationToken ct) 
         {
-            // Add item to cart
+            var command = new AddItemToCartCommand
+            {
+                CustomerId = cartId,
+                ProductId = request.ProductId,
+                Quantity = request.Quantity
+            };
+
+            var result = await _addItemHandler.HandleAsync(command, ct);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+
             return Ok();
         }
 
-        [HttpPut("{cartId}/items/{itemId}")]
-        public IActionResult UpdateItemQuantity(Guid cartId, Guid itemId, int quantity) 
+        [HttpDelete("{cartId}/items/{itemId}")]
+        public async Task<IActionResult> RemoveItemFromCart(Guid cartId, Guid itemId, CancellationToken ct)
         {
-            // Update item quantity
-            return Ok();
-        }
+            var command = new RemoveItemFromCartCommand
+            {
+                CustomerId = cartId,
+                ProductId = itemId
+            };
 
-        [HttpDelete]
-        public IActionResult RemoveItemFromCart(Guid cartId, Guid itemId)
-        {
-            // Remove item from cart
+            var result = await _removeItemHandler.HandleAsync(command, ct);
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+
             return NoContent();
         }
+
+        [HttpPost("{cartId}/checkout")]
+        public async Task<IActionResult> Checkout(Guid cartId, CancellationToken ct)
+        {
+            var command = new CheckoutCartCommand { CustomerId = cartId };
+            var result = await _checkoutCartHandler.HandleAsync(command, ct);
+
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+
+            return Ok();
+        }
+
+        [HttpDelete("{cartId}")]
+        public async Task<IActionResult> ClearCart(Guid cartId, CancellationToken ct)
+        {
+            var command = new ClearCartCommand { CustomerId = cartId };
+            var result = await _clearCartHandler.HandleAsync(command, ct);
+            
+            if (!result.IsSuccess) return BadRequest(result.Errors);
+
+            return NoContent();
+        }
+
+        public record AddItemRequest(Guid ProductId, int Quantity);
     }
 }

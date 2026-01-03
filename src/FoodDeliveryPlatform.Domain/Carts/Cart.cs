@@ -7,15 +7,18 @@ namespace FoodDeliveryPlatform.Domain.Carts
     {
         private readonly List<CartItem> _items = new List<CartItem>();
 
-        public Cart(Guid id) : base(id)
+        public Guid CustomerId { get; private set; }
+
+        public Cart(Guid id, Guid customerId) : base(id)
         {
+            CustomerId = customerId;
         }
 
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
 
-        public static Cart Create(string customerId)
+        public static Cart Create(Guid customerId)
         {
-            return new Cart(Guid.CreateVersion7());
+            return new Cart(Guid.CreateVersion7(), customerId);
         }
 
         public void AddCartItem(Guid productId, int quantity)

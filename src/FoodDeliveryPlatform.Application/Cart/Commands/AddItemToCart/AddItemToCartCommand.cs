@@ -24,7 +24,7 @@ namespace FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart
             
             if (cart is null)
             {
-                cart = FoodDeliveryPlatform.Domain.Carts.Cart.Create(command.CustomerId.ToString());
+                cart = FoodDeliveryPlatform.Domain.Carts.Cart.Create(command.CustomerId);
             }
 
             // Ideally use Domain Logic here, e.g., cart.AddItem(...)
