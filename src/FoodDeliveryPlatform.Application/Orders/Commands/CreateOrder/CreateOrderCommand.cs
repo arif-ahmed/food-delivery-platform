@@ -44,8 +44,9 @@ namespace FoodDeliveryPlatform.Application.Orders.Commands.CreateOrder
             var orderCreatedEvent = new OrderCreatedEvent(order.Id, order.CustomerId, order.TotalAmount);
             await _serviceBus.PublishAsync(orderCreatedEvent, cancellationToken);
 
-            // 5. Clear Cart (Could be done by an event listener, but doing it here for simplicity as per plan)
-            await _cartRepository.DeleteAsync(command.CustomerId, cancellationToken);
+            // 5. Clear Cart (Removed to adhere to SRP - now handled by ClearCartOnOrderCreatedHandler)
+            // await _cartRepository.DeleteAsync(command.CustomerId, cancellationToken);
+
 
             return new Result(true);
         }

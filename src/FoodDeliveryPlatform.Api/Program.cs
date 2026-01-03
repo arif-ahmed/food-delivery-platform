@@ -24,6 +24,7 @@ builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICo
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.ClearCart.ClearCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.ClearCart.ClearCartHandler>();
 // REMOVED: builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.Checkout.CheckoutCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.Checkout.CheckoutCartHandler>();
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Orders.Commands.CreateOrder.CreateOrderCommand>, FoodDeliveryPlatform.Application.Orders.Commands.CreateOrder.CreateOrderHandler>();
+builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.IEventHandler<FoodDeliveryPlatform.Domain.Orders.Events.OrderCreatedEvent>, FoodDeliveryPlatform.Application.Cart.EventHandlers.ClearCartOnOrderCreatedHandler>();
 
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.IQueryHandler<FoodDeliveryPlatform.Application.Cart.Queries.GetCart.GetCartQuery, FoodDeliveryPlatform.Application.Cart.Dtos.CartDto?>, FoodDeliveryPlatform.Application.Cart.Queries.GetCart.GetCartHandler>();
 

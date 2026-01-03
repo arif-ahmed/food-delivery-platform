@@ -3,6 +3,7 @@ using FoodDeliveryPlatform.Application.Orders.Abstractions;
 using FoodDeliveryPlatform.Domain.Carts;
 using FoodDeliveryPlatform.Domain.Orders;
 using FoodDeliveryPlatform.SharedKernel.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 
 namespace FoodDeliveryPlatform.Api.Infrastructure
@@ -53,9 +54,22 @@ namespace FoodDeliveryPlatform.Api.Infrastructure
 
     public class MockServiceBus : IServiceBus
     {
-        public Task PublishAsync<T>(T @event, CancellationToken cancellationToken = default) where T : IDomainEvent
+        private readonly IServiceProvider _serviceProvider;
+
+        public MockServiceBus(IServiceProvider serviceProvider)
         {
-            return Task.CompletedTask;
+            _serviceProvider = serviceProvider;
+        }
+
+        public async Task PublishAsync<T>(T @event, CancellationToken cancellationToken = default) where T : IDomainEvent
+        {
+            // Simple in-process dispatch for demonstration/testing
+            using var scope = _serviceProvider.CreateScope();
+            var handler = scope.ServiceProvider.GetService<IEventHandler<T>>();
+            if (handler != null)
+            {
+                await handler.HandleAsync(@event, cancellationToken);
+            }
         }
     }
 }
