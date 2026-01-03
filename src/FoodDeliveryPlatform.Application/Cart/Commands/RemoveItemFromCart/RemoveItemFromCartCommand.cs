@@ -19,7 +19,18 @@ namespace FoodDeliveryPlatform.Application.Cart.Commands.RemoveItemFromCart
 
         public async Task<Result> HandleAsync(RemoveItemFromCartCommand command, CancellationToken cancellationToken = default)
         {
-            // Implementation pending
+            var cart = await _cartRepository.GetAsync(command.CustomerId, cancellationToken);
+            
+            if (cart is null)
+            {
+                return new Result(false, new[] { "Cart not found" });
+            }
+
+            // Domain logic
+            // cart.RemoveItem(command.ProductId);
+
+            await _cartRepository.UpdateAsync(cart, cancellationToken);
+
             return new Result(true);
         }
     }

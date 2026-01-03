@@ -18,7 +18,7 @@ namespace FoodDeliveryPlatform.Application.Cart.Commands.ClearCart
 
         public async Task<Result> HandleAsync(ClearCartCommand command, CancellationToken cancellationToken = default)
         {
-            // Implementation pending
+            await _cartRepository.DeleteAsync(command.CustomerId, cancellationToken);
             return new Result(true);
         }
     }

@@ -20,7 +20,18 @@ namespace FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart
 
         public async Task<Result> HandleAsync(AddItemToCartCommand command, CancellationToken cancellationToken = default)
         {
-            // Implementation pending
+            var cart = await _cartRepository.GetAsync(command.CustomerId, cancellationToken);
+            
+            if (cart is null)
+            {
+                cart = FoodDeliveryPlatform.Domain.Carts.Cart.Create(command.CustomerId.ToString());
+            }
+
+            // Ideally use Domain Logic here, e.g., cart.AddItem(...)
+            // cart.AddItem(command.ProductId, command.Quantity);
+
+            await _cartRepository.UpdateAsync(cart, cancellationToken);
+
             return new Result(true);
         }
     }

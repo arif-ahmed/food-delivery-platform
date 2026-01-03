@@ -24,7 +24,7 @@ namespace FoodDeliveryPlatform.Application.Cart.Queries.GetCart
 
         public async Task<CartDto?> HandleAsync(GetCartQuery query, CancellationToken cancellationToken = default)
         {
-            var cart = await _cartRepository.GetByIdAsync(query.CustomerId, cancellationToken);
+            var cart = await _cartRepository.GetAsync(query.CustomerId, cancellationToken);
             if (cart == null) return null;
 
             // Simple mapping - in real app use AutoMapper or Manual mapping method
