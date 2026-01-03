@@ -21,9 +21,9 @@ namespace FoodDeliveryPlatform.Domain.Carts
             return new Cart(Guid.CreateVersion7(), customerId);
         }
 
-        public void AddCartItem(Guid productId, int quantity)
+        public void AddCartItem(Guid productId, string productName, decimal unitPrice, int quantity)
         {
-            _items.Add(new CartItem(productId, quantity));
+            _items.Add(new CartItem(productId, productName, unitPrice, quantity));
         }
 
         public void UpdateQuantity(Guid productId, int newQuantity)

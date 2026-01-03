@@ -6,6 +6,8 @@ namespace FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart
     {
         public Guid CustomerId { get; set; }
         public Guid ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
     }
 
@@ -28,7 +30,7 @@ namespace FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart
             }
 
             // Ideally use Domain Logic here, e.g., cart.AddItem(...)
-            // cart.AddItem(command.ProductId, command.Quantity);
+            cart.AddCartItem(command.ProductId, command.ProductName, command.UnitPrice, command.Quantity);
 
             await _cartRepository.UpdateAsync(cart, cancellationToken);
 

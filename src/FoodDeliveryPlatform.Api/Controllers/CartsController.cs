@@ -1,5 +1,4 @@
 ﻿using FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart;
-using FoodDeliveryPlatform.Application.Cart.Commands.Checkout;
 using FoodDeliveryPlatform.Application.Cart.Commands.ClearCart;
 using FoodDeliveryPlatform.Application.Cart.Commands.RemoveItemFromCart;
 using FoodDeliveryPlatform.Application.Cart.Queries.GetCart;
@@ -15,20 +14,17 @@ namespace FoodDeliveryPlatform.Api.Controllers
         private readonly ICommandHandler<AddItemToCartCommand> _addItemHandler;
         private readonly ICommandHandler<RemoveItemFromCartCommand> _removeItemHandler;
         private readonly ICommandHandler<ClearCartCommand> _clearCartHandler;
-        private readonly ICommandHandler<CheckoutCartCommand> _checkoutCartHandler;
         private readonly IQueryHandler<GetCartQuery, Application.Cart.Dtos.CartDto?> _getCartHandler;
 
         public CartsController(
             ICommandHandler<AddItemToCartCommand> addItemHandler,
             ICommandHandler<RemoveItemFromCartCommand> removeItemHandler,
             ICommandHandler<ClearCartCommand> clearCartHandler,
-            ICommandHandler<CheckoutCartCommand> checkoutCartHandler,
             IQueryHandler<GetCartQuery, Application.Cart.Dtos.CartDto?> getCartHandler)
         {
             _addItemHandler = addItemHandler;
             _removeItemHandler = removeItemHandler;
             _clearCartHandler = clearCartHandler;
-            _checkoutCartHandler = checkoutCartHandler;
             _getCartHandler = getCartHandler;
         }
 
@@ -47,6 +43,8 @@ namespace FoodDeliveryPlatform.Api.Controllers
             {
                 CustomerId = cartId,
                 ProductId = request.ProductId,
+                ProductName = request.ProductName,
+                UnitPrice = request.UnitPrice,
                 Quantity = request.Quantity
             };
 
@@ -71,16 +69,7 @@ namespace FoodDeliveryPlatform.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("{cartId}/checkout")]
-        public async Task<IActionResult> Checkout(Guid cartId, CancellationToken ct)
-        {
-            var command = new CheckoutCartCommand { CustomerId = cartId };
-            var result = await _checkoutCartHandler.HandleAsync(command, ct);
 
-            if (!result.IsSuccess) return BadRequest(result.Errors);
-
-            return Ok();
-        }
 
         [HttpDelete("{cartId}")]
         public async Task<IActionResult> ClearCart(Guid cartId, CancellationToken ct)
@@ -93,6 +82,6 @@ namespace FoodDeliveryPlatform.Api.Controllers
             return NoContent();
         }
 
-        public record AddItemRequest(Guid ProductId, int Quantity);
+        public record AddItemRequest(Guid ProductId, string ProductName, decimal UnitPrice, int Quantity);
     }
 }

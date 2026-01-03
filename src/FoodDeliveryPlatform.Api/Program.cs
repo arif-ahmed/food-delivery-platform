@@ -13,13 +13,17 @@ builder.Services.AddOpenApi();
 // I will create a Dummy/InMemory one for now or assume it will be provided.
 
 // Mock Repository for Compilation/Runtime until Infrastructure layer is ready
-builder.Services.AddSingleton<FoodDeliveryPlatform.Application.Cart.Abstractions.ICartRepository, InMemoryCartRepository>();
+// Mock Repository for Compilation/Runtime until Infrastructure layer is ready
+builder.Services.AddSingleton<FoodDeliveryPlatform.Application.Cart.Abstractions.ICartRepository, FoodDeliveryPlatform.Api.Infrastructure.InMemoryCartRepository>();
+builder.Services.AddSingleton<FoodDeliveryPlatform.Application.Orders.Abstractions.IOrderRepository, FoodDeliveryPlatform.Api.Infrastructure.InMemoryOrderRepository>();
+builder.Services.AddSingleton<FoodDeliveryPlatform.SharedKernel.Abstractions.IServiceBus, FoodDeliveryPlatform.Api.Infrastructure.MockServiceBus>();
 
 // Handlers
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart.AddItemToCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.AddItemToCart.AddItemToCartHandler>();
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.RemoveItemFromCart.RemoveItemFromCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.RemoveItemFromCart.RemoveItemFromCartHandler>();
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.ClearCart.ClearCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.ClearCart.ClearCartHandler>();
-builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.Checkout.CheckoutCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.Checkout.CheckoutCartHandler>();
+// REMOVED: builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Cart.Commands.Checkout.CheckoutCartCommand>, FoodDeliveryPlatform.Application.Cart.Commands.Checkout.CheckoutCartHandler>();
+builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.ICommandHandler<FoodDeliveryPlatform.Application.Orders.Commands.CreateOrder.CreateOrderCommand>, FoodDeliveryPlatform.Application.Orders.Commands.CreateOrder.CreateOrderHandler>();
 
 builder.Services.AddTransient<FoodDeliveryPlatform.SharedKernel.Abstractions.IQueryHandler<FoodDeliveryPlatform.Application.Cart.Queries.GetCart.GetCartQuery, FoodDeliveryPlatform.Application.Cart.Dtos.CartDto?>, FoodDeliveryPlatform.Application.Cart.Queries.GetCart.GetCartHandler>();
 
@@ -39,26 +43,4 @@ app.MapControllers();
 
 app.Run();
 
-// Temporary InMemory Repository for testing API connectivity
-public class InMemoryCartRepository : FoodDeliveryPlatform.Application.Cart.Abstractions.ICartRepository
-{
-    private readonly System.Collections.Concurrent.ConcurrentDictionary<Guid, FoodDeliveryPlatform.Domain.Carts.Cart> _store = new();
 
-    public Task<FoodDeliveryPlatform.Domain.Carts.Cart?> GetAsync(Guid customerId, CancellationToken ct = default)
-    {
-        _store.TryGetValue(customerId, out var cart);
-        return Task.FromResult(cart);
-    }
-
-    public Task UpdateAsync(FoodDeliveryPlatform.Domain.Carts.Cart cart, CancellationToken ct = default)
-    {
-        _store.AddOrUpdate(cart.CustomerId, cart, (key, oldValue) => cart);
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(Guid customerId, CancellationToken ct = default)
-    {
-        _store.TryRemove(customerId, out _);
-        return Task.CompletedTask;
-    }
-}
